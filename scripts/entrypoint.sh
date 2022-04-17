@@ -19,6 +19,7 @@ if [[ ! -z $ENV_FILE_NAME ]]; then
     . ./$SHELL_FILE_NAME
 fi
 
+pip install setuptools-scm==5.0.2
 pip install -r $3
 echo "Migrating DB"
 python manage.py migrate
