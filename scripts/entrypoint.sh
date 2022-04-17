@@ -9,8 +9,8 @@ export DATABASE_URL=postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAM
 service postgresql start
 
 # Setup database
-python /modify_settings.py
-echo "Added postgres config to your settings file"
+# python /modify_settings.py
+echo "Did not add postgres config to your settings file"
 
 # Setup user environment vars
 if [[ ! -z $ENV_FILE_NAME ]]; then
