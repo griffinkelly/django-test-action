@@ -1,5 +1,5 @@
-name: "Django Test CI"
-description: "A github action to run your django tests"
+name: "Django Test CI Python 2.7"
+description: "A github action to run your django tests in Python 2.7"
 branding:
   icon: check-circle
   color: green
