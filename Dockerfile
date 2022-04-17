@@ -1,4 +1,4 @@
-FROM python:3.9.2-slim
+FROM python:2.7-jessie
 
 RUN set -eux; \
 	groupadd -r postgres --gid=999; \
@@ -24,7 +24,7 @@ ENV DB_PORT='5432'
 USER postgres
 RUN  service postgresql start \
 && psql -c "CREATE USER ${DB_USER} WITH SUPERUSER PASSWORD '${DB_PASSWORD}';ALTER USER ${DB_USER} CREATEDB;" \
-&& psql -c "CREATE DATABASE ${DB_NAME} WITH owner ${DB_USER} encoding 'utf-8'"
+&& psql -c "CREATE DATABASE ${DB_NAME} WITH owner ${DB_USER}"
 USER root
 
 COPY ./scripts /
