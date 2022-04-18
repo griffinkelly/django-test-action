@@ -31,5 +31,5 @@ if [ "${2,,}" == "true" ]; then
     echo "Enabled Parallel Testing"
     python manage.py test --parallel
 else 
-    python manage.py test
+    python manage.py test $5
 fi
