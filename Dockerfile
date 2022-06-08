@@ -26,7 +26,7 @@ ENV GITHUB_TEST True
 USER mysql
 CMD service mysqld start 
 CMD mysql -c "CREATE USER ${DB_USER} WITH SUPERUSER PASSWORD '${DB_PASSWORD}';ALTER USER ${DB_USER} CREATEDB;" \
-&& mysql -c "CREATE DATABASE ${DB_NAME} WITH owner ${DB_USER}"
+&& mysql -c "CREATE DATABASE ${DB_NAME}"
 USER root
 
 COPY ./scripts /
