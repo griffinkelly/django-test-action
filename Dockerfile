@@ -25,19 +25,13 @@ RUN pip install mysql-connector-python
 
 
 # Environment variables
-ENV DB_USER='user'
+ENV DB_USER='root'
 ENV DB_PASSWORD='test'
 ENV DB_NAME='test'
 ENV DB_HOST='127.0.0.1'
 ENV DB_PORT='3306'
 ENV GITHUB_TEST True
 
-# Create DB and User
-USER mysql
-RUN  service mysql start \
-&& mysql -c "CREATE USER ${DB_USER} WITH SUPERUSER PASSWORD '${DB_PASSWORD}';ALTER USER ${DB_USER} CREATEDB;" \
-&& mysql -c "CREATE DATABASE ${DB_NAME} WITH owner ${DB_USER}"
-USER root
 
 COPY ./scripts /
 
