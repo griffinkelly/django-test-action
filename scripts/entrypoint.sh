@@ -1,9 +1,9 @@
 #!/bin/bash
 set -e
 
-export SETTINGS_FILE="./$1"
+export SETTINGS_FILE="./$INPUT_SETTINGS_PATH"
 export SHELL_FILE_NAME="set_env.sh"
-export ENV_FILE_NAME=$4
+export ENV_FILE_NAME=$INPUT_ENV_FILE
 
 
 docker_run="docker run"
@@ -49,16 +49,16 @@ if [[ ! -z $ENV_FILE_NAME ]]; then
 fi
 
 pip install setuptools-scm==5.0.2
-pip install -r $3
+pip install -r $$INPUT_REQUIREMENTS_FILE
 echo "Migrating DB"
 python2 manage.py migrate
 
 echo "Running your tests"
 
 # TODO: Find a better alternative
-if [ "${2,,}" == "true" ]; then
+if [ "$INPUT_PARALLEL_TESTS" == "true" ]; then
     echo "Enabled Parallel Testing"
     python2 manage.py test --parallel
 else 
-    python2 manage.py test $5
+    python2 manage.py test $INPUT_TEST_APPS
 fi
