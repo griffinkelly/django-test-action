@@ -1,25 +1,15 @@
-FROM python:2.7-jessie
+FROM mysql:8.0.29
 
-RUN pip install --upgrade pip virtualenv
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    wget \
-    dos2unix \
-    libgeos-dev \
-    tcl8.5 && \
-    apt-get clean && rm /var/lib/apt/lists/*_*
+RUN apt update
+RUN apt install -y python2
 
 RUN apt-get update && apt-get dist-upgrade -y
+RUN apt install -y curl
+RUN curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py
+RUN python2 get-pip.py
 
-ENV MYSQL_PWD test
-RUN echo "mysql-server mysql-server/root_password password $MYSQL_PWD" | debconf-set-selections
-RUN echo "mysql-server mysql-server/root_password_again password $MYSQL_PWD" | debconf-set-selections
 
-RUN apt-get install -y mysql-server
-RUN apt install wget curl && apt-get clean
-
-EXPOSE 3306
 
 RUN pip install mysql-connector-python
 
@@ -32,6 +22,12 @@ ENV DB_HOST='127.0.0.1'
 ENV DB_PORT='3306'
 ENV GITHUB_TEST True
 
+# Create DB and User
+USER mysql
+CMD service mysqld start 
+CMD mysql -c "CREATE USER ${DB_USER} WITH SUPERUSER PASSWORD '${DB_PASSWORD}';ALTER USER ${DB_USER} CREATEDB;" \
+&& mysql -c "CREATE DATABASE ${DB_NAME} WITH owner ${DB_USER}"
+USER root
 
 COPY ./scripts /
 

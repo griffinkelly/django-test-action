@@ -21,14 +21,14 @@ fi
 pip install setuptools-scm==5.0.2
 pip install -r $3
 echo "Migrating DB"
-python manage.py migrate
+python2 manage.py migrate
 
 echo "Running your tests"
 
 # TODO: Find a better alternative
 if [ "${2,,}" == "true" ]; then
     echo "Enabled Parallel Testing"
-    python manage.py test --parallel
+    python2 manage.py test --parallel
 else 
-    python manage.py test $5
+    python2 manage.py test $5
 fi
