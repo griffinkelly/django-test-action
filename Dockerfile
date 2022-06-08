@@ -1,6 +1,43 @@
-FROM docker:stable
+FROM python:2.7-jessie
 
+RUN pip install --upgrade pip virtualenv
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    wget \
+    dos2unix \
+    libgeos-dev \
+    tcl8.5 && \
+    apt-get clean && rm /var/lib/apt/lists/*_*
+
+RUN apt-get update && apt-get dist-upgrade -y
+
+ENV MYSQL_PWD test
+RUN echo "mysql-server mysql-server/root_password password $MYSQL_PWD" | debconf-set-selections
+RUN echo "mysql-server mysql-server/root_password_again password $MYSQL_PWD" | debconf-set-selections
+
+RUN apt-get install -y mysql-server
+RUN apt install wget curl && apt-get clean
+
+EXPOSE 3306
+
+RUN pip install mysql-connector-python
+
+
+# Environment variables
+ENV DB_USER='user'
+ENV DB_PASSWORD='test'
+ENV DB_NAME='test'
+ENV DB_HOST='127.0.0.1'
+ENV DB_PORT='3306'
 ENV GITHUB_TEST True
+
+# Create DB and User
+USER mysql
+RUN  service mysql start \
+&& mysql -c "CREATE USER ${DB_USER} WITH SUPERUSER PASSWORD '${DB_PASSWORD}';ALTER USER ${DB_USER} CREATEDB;" \
+&& mysql -c "CREATE DATABASE ${DB_NAME} WITH owner ${DB_USER}"
+USER root
 
 COPY ./scripts /
 
