@@ -6,6 +6,7 @@
 # export ENV_FILE_NAME=$INPUT_ENV_FILE
 
 
+
 docker_run="docker run"
 
 if [ -n "$INPUT_MYSQL_ROOT_PASSWORD" ]; then
@@ -22,9 +23,8 @@ elif [ -n "$INPUT_MYSQL_USER" ]; then
 
   docker_run="$docker_run -e MYSQL_RANDOM_ROOT_PASSWORD=true -e MYSQL_USER=$INPUT_MYSQL_USER -e MYSQL_PASSWORD=$INPUT_MYSQL_PASSWORD"
 else
-  echo "Using empty password for root"
-  
-  docker_run="$docker_run -e MYSQL_ALLOW_EMPTY_PASSWORD=true"
+  echo "Both root password and superuser are empty, must contains one superuser"
+  exit 1
 fi
 
 if [ -n "$INPUT_MYSQL_DATABASE" ]; then
