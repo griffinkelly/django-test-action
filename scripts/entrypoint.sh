@@ -10,7 +10,7 @@ mysql -e "CREATE DATABASE test"
 
 # Setup database
 python /modify_settings.py
-echo "Did not add postgres config to your settings file"
+echo "Alter Settings File"
 
 # Setup user environment vars
 if [[ ! -z $ENV_FILE_NAME ]]; then
