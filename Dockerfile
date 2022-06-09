@@ -27,6 +27,7 @@ ENV DB_PASSWORD='password'
 ENV DB_NAME='test'
 ENV DB_HOST='127.0.0.1'
 ENV DB_PORT='5432'
+ENV GITHUB_TEST True
 
 # CMD /bin/bash 
 # # Create DB and User
