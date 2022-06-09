@@ -1,36 +1,41 @@
 FROM python:2.7-jessie
 
-RUN set -eux; \
-	groupadd -r postgres --gid=999; \
-	useradd -r -g postgres --uid=999 --home-dir=/var/lib/postgresql --shell=/bin/bash postgres; \
-	mkdir -p /var/lib/postgresql; \
-	chown -R postgres:postgres /var/lib/postgresql
-RUN mkdir -p /var/run/postgresql && chown -R postgres:postgres /var/run/postgresql && chmod 2777 /var/run/postgresql
+RUN pip install --upgrade pip virtualenv
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    wget \
+    dos2unix \
+    libgeos-dev \
+    tcl8.5 && \
+    apt-get clean && rm /var/lib/apt/lists/*_*
 
-RUN apt-get update \
-&& apt-get install -y --no-install-recommends postgresql build-essential libpq-dev python-psycopg2 gcc \
-&& apt-get purge -y --auto-remove \
-&& rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get dist-upgrade -y
+
+ENV MYSQL_PWD test
+RUN echo "mysql-server mysql-server/root_password password $MYSQL_PWD" | debconf-set-selections
+RUN echo "mysql-server mysql-server/root_password_again password $MYSQL_PWD" | debconf-set-selections
+
+RUN apt-get install -y mysql-server
+RUN apt install wget curl && apt-get clean
+
+RUN pip install mysql-connector-python
 
 # Environment variables
 ENV DB_USER='test'
-ENV DB_PASSWORD='test123'
-ENV DB_NAME='testdb'
+ENV DB_PASSWORD='password'
+ENV DB_NAME='test'
 ENV DB_HOST='127.0.0.1'
 ENV DB_PORT='5432'
 
-# Create DB and User
-USER postgres
-RUN  service postgresql start \
-&& psql -c "CREATE USER ${DB_USER} WITH SUPERUSER PASSWORD '${DB_PASSWORD}';ALTER USER ${DB_USER} CREATEDB;" \
-&& psql -c "CREATE DATABASE ${DB_NAME} WITH owner ${DB_USER}"
-USER root
-
+# CMD /bin/bash 
+# # Create DB and User
+# # USER mysql
+# CMD service mysql start && mysql -e "CREATE DATABASE ${DB_NAME}"
+# # && mysql -c "CREATE USER ${DB_USER} WITH SUPERUSER PASSWORD '${DB_PASSWORD}';ALTER USER ${DB_USER} CREATEDB;" \
+# # && mysql -c "CREATE DATABASE ${DB_NAME} WITH owner ${DB_USER}"
+# # USER root
 COPY ./scripts /
-
-#Install psycopg2
-RUN pip install psycopg2-binary
 
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
