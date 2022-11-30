@@ -16,7 +16,7 @@ ENV MYSQL_PWD test
 RUN echo "mysql-server mysql-server/root_password password $MYSQL_PWD" | debconf-set-selections
 RUN echo "mysql-server mysql-server/root_password_again password $MYSQL_PWD" | debconf-set-selections
 
-RUN apt-get install -y mysql-server
+RUN apt-get install -y --force-yes mysql-server
 RUN apt install wget curl && apt-get clean
 
 RUN pip install mysql-connector-python
