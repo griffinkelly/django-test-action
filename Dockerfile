@@ -2,7 +2,7 @@ FROM python:2.7-jessie
 
 RUN pip install --upgrade pip virtualenv
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --force-yes --no-install-recommends \
     build-essential \
     wget \
     dos2unix \
