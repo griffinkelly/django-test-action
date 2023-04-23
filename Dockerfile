@@ -8,7 +8,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     dos2unix \
     libgeos-dev \
     tcl8.6 && \
-    apt-utils && \
     apt-get clean && rm /var/lib/apt/lists/*_*
 
 RUN apt-get update && apt-get dist-upgrade -y
