@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN apt-get update && apt-get dist-upgrade -y
 
+
 ENV MYSQL_PWD test
 RUN echo "mysql-server mysql-server/root_password password $MYSQL_PWD" | debconf-set-selections
 RUN echo "mysql-server mysql-server/root_password_again password $MYSQL_PWD" | debconf-set-selections
@@ -24,9 +25,14 @@ RUN echo "mysql-apt-config mysql-apt-config/select-server select mysql-5.7" | de
 
 # mysql-client does not exist for M1 Macs / arm64, so force debian to install an amd64 version
 RUN DPKG_ARCH=$(dpkg --print-architecture ) && if [ $DPKG_ARCH = arm64 ]; then dpkg --add-architecture amd64; fi
+RUN apt-get update
 
-RUN apt-get update && \
-  apt-get install -y mysql-community-client mysql-client
+
+RUN echo mysql-server mysql-server/root_password password root | debconf-set-selections;\
+    echo mysql-server mysql-server/root_password_again password root | debconf-set-selections; 
+
+RUN apt-get install -y mysql-server
+RUN apt-get install -y mysql-client
 
 
 RUN apt install wget curl && apt-get clean
