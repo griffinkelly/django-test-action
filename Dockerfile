@@ -16,7 +16,18 @@ ENV MYSQL_PWD test
 RUN echo "mysql-server mysql-server/root_password password $MYSQL_PWD" | debconf-set-selections
 RUN echo "mysql-server mysql-server/root_password_again password $MYSQL_PWD" | debconf-set-selections
 
-RUN apt install default-mysql-server -y
+RUN apt install gnupg
+ARG MYSQL_APT_DEB=mysql-apt-config_0.8.22-1_all.deb
+RUN wget https://dev.mysql.com/get/${MYSQL_APT_DEB}
+RUN echo "mysql-apt-config mysql-apt-config/select-server select mysql-5.7" | debconf-set-selections && \
+  DEBIAN_FRONTEND=noninteractive apt install ./${MYSQL_APT_DEB} -y
+
+# mysql-client does not exist for M1 Macs / arm64, so force debian to install an amd64 version
+RUN DPKG_ARCH=$(dpkg --print-architecture ) && if [ $DPKG_ARCH = arm64 ]; then dpkg --add-architecture amd64; fi
+
+RUN apt-get update && \
+  apt-get install -y mysql-community-client mysql-client
+
 
 RUN apt install wget curl && apt-get clean
 
