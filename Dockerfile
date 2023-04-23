@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     dos2unix \
     libgeos-dev \
     tcl8.6 && \
+    apt-utils && \
     apt-get clean && rm /var/lib/apt/lists/*_*
 
 RUN apt-get update && apt-get dist-upgrade -y
@@ -15,8 +16,11 @@ RUN apt-get update && apt-get dist-upgrade -y
 ENV MYSQL_PWD test
 RUN echo "mysql-server mysql-server/root_password password $MYSQL_PWD" | debconf-set-selections
 RUN echo "mysql-server mysql-server/root_password_again password $MYSQL_PWD" | debconf-set-selections
+RUN wget http://repo.mysql.com/mysql-apt-config_0.8.13-1_all.deb
+RUN sudo dpkg -i mysql-apt-config_0.8.13-1_all.deb
+RUN sudo apt update 
+RUN sudo apt install -y mysql-server
 
-RUN apt-get install -y mysql-server
 RUN apt install wget curl && apt-get clean
 
 RUN pip install mysql-connector-python
