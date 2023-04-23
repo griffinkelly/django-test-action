@@ -27,9 +27,8 @@ RUN echo "mysql-apt-config mysql-apt-config/select-server select mysql-5.7" | de
 RUN DPKG_ARCH=$(dpkg --print-architecture ) && if [ $DPKG_ARCH = arm64 ]; then dpkg --add-architecture amd64; fi
 RUN apt-get update
 
-
-RUN echo mysql-server mysql-server/root_password password root | debconf-set-selections;\
-    echo mysql-server mysql-server/root_password_again password root | debconf-set-selections; 
+RUN echo "mysql-community-server mysql-community-server/root-pass password $MYSQL_PWD" | debconf-set-selections && \
+    echo "mysql-community-server mysql-community-server/re-root-pass password $MYSQL_PWD" | debconf-set-selections
 
 RUN apt-get install -y mysql-server
 RUN apt-get install -y mysql-client
