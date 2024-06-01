@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     dos2unix \
     libgeos-dev \
     tcl8.6 && \
+    perl && \
     apt-get clean && rm /var/lib/apt/lists/*_*
 
 RUN apt-get update && apt-get dist-upgrade -y
@@ -18,10 +19,17 @@ RUN echo "mysql-server mysql-server/root_password password $MYSQL_PWD" | debconf
 RUN echo "mysql-server mysql-server/root_password_again password $MYSQL_PWD" | debconf-set-selections
 
 RUN apt install gnupg
+# Add the MySQL APT repository GPG key
+RUN wget --quiet --output-document=/tmp/RPM-GPG-KEY-mysql https://repo.mysql.com/RPM-GPG-KEY-mysql && \
+    apt-key add /tmp/RPM-GPG-KEY-mysql
+
 ARG MYSQL_APT_DEB=mysql-apt-config_0.8.22-1_all.deb
 RUN wget https://dev.mysql.com/get/${MYSQL_APT_DEB}
 RUN echo "mysql-apt-config mysql-apt-config/select-server select mysql-5.7" | debconf-set-selections && \
   DEBIAN_FRONTEND=noninteractive apt install ./${MYSQL_APT_DEB} -y
+
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys B7B3B788A8D3785C
+
 
 # mysql-client does not exist for M1 Macs / arm64, so force debian to install an amd64 version
 RUN DPKG_ARCH=$(dpkg --print-architecture ) && if [ $DPKG_ARCH = arm64 ]; then dpkg --add-architecture amd64; fi
@@ -30,8 +38,8 @@ RUN apt-get update
 RUN echo "mysql-community-server mysql-community-server/root-pass password $MYSQL_PWD" | debconf-set-selections && \
     echo "mysql-community-server mysql-community-server/re-root-pass password $MYSQL_PWD" | debconf-set-selections
 
-RUN apt-get install -y mysql-server
 RUN apt-get install -y mysql-client
+RUN apt --fix-broken purge mysql-server
 
 
 RUN apt install wget curl && apt-get clean
