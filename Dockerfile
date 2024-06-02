@@ -38,7 +38,7 @@ RUN echo "mysql-community-server mysql-community-server/root-pass password $MYSQ
     echo "mysql-community-server mysql-community-server/re-root-pass password $MYSQL_PWD" | debconf-set-selections
 
 RUN apt-get install -y mysql-client
-RUN apt --fix-broken purge mysql-server
+RUN apt-get install -y mysql-server
 
 
 RUN apt install -y wget curl && apt-get clean 
