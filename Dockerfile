@@ -1,4 +1,4 @@
-FROM python:2.7-buster
+FROM --platform=linux/amd64 python:2.7-buster
 
 RUN pip install --upgrade pip virtualenv
 
