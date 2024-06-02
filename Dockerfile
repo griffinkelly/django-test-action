@@ -8,17 +8,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     dos2unix \
     libgeos-dev \
     tcl8.6 && \
-    perl && \
     apt-get clean && rm /var/lib/apt/lists/*_*
 
-RUN apt-get update && apt-get dist-upgrade -y
+RUN apt-get update
 
 
 ENV MYSQL_PWD test
 RUN echo "mysql-server mysql-server/root_password password $MYSQL_PWD" | debconf-set-selections
 RUN echo "mysql-server mysql-server/root_password_again password $MYSQL_PWD" | debconf-set-selections
 
-RUN apt install gnupg
+RUN apt install -y gnupg 
 # Add the MySQL APT repository GPG key
 RUN wget --quiet --output-document=/tmp/RPM-GPG-KEY-mysql https://repo.mysql.com/RPM-GPG-KEY-mysql && \
     apt-key add /tmp/RPM-GPG-KEY-mysql
@@ -42,7 +41,7 @@ RUN apt-get install -y mysql-client
 RUN apt --fix-broken purge mysql-server
 
 
-RUN apt install wget curl && apt-get clean
+RUN apt install -y wget curl && apt-get clean 
 
 RUN pip install mysql-connector-python
 
